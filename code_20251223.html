@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的GitHub Pages网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            transition: background 0.5s ease;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        /* 右上角导航按钮 */
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 999;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .nav-btn {
+            padding: 8px 16px;
+            background: #24292e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .nav-btn:hover {
+            background: #40464c;
+        }
+        /* 页面容器 */
+        .page {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 60px 40px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: rgba(255,255,255,0.9);
+            margin: 0 auto;
+            max-width: 1200px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .page.active {
+            display: flex;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #24292e;
+        }
+        p {
+            color: #586069;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        /* 通用上传区域 */
+        .upload-area {
+            border: 2px dashed #d1d5da;
+            padding: 40px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 400px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #2ea44f;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            padding: 8px 16px;
+            background: #2ea44f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .upload-btn:hover {
+            background: #22863a;
+        }
+        .preview-text {
+            margin-top: 15px;
+            color: #24292e;
+        }
+        .preview-img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        /* 文本框样式 */
+        .text-box-container {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .text-box {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        .text-box:focus {
+            outline: none;
+            border-color: #0366d6;
+            box-shadow: 0 0 0 3px rgba(3,102,214,0.1);
+        }
+        /* 页面背景设置按钮 */
+        .page-bg-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            background: #0366d6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+    <!-- 右上角导航按钮 -->
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showPage('home')">主页</button>
+        <button class="nav-btn" onclick="showPage('profile')">简介</button>
+        <button class="nav-btn" onclick="showPage('intro')">介绍</button>
+        <button class="nav-btn" onclick="showPage('upload')">文件上传</button>
+        <button class="nav-btn" onclick="showPage('text-edit')">文本编辑</button>
+    </div>
+
+    <!-- 页面背景设置按钮（固定左下角） -->
+    <input type="file" id="page-bg-input" class="file-input" accept="image/*" onchange="setPageBackground()">
+    <button class="page-bg-btn" onclick="document.getElementById('page-bg-input').click()">设置当前页面背景</button>
+
+    <!-- 主页 -->
+    <div id="home" class="page active">
+        <h1>欢迎来到我的个人网站</h1>
+        <p>基于GitHub Pages搭建，每个页面可设置专属背景，支持文本编辑、文件预览等功能</p>
+    </div>
+
+    <!-- 简介页 -->
+    <div id="profile" class="page">
+        <h1>关于我</h1>
+        <p>可在此填写个人信息、兴趣爱好、技术栈等内容</p>
+        <p>例如：一名热爱编程的开发者，擅长前端开发与工具搭建</p>
+    </div>
+
+    <!-- 介绍页 -->
+    <div id="intro" class="page">
+        <h1>网站介绍</h1>
+        <p>本网站基于HTML/CSS/JavaScript开发，部署在GitHub Pages上，是轻量级静态站点</p>
+        <p>核心功能：页面独立背景、页面切换、文件上传预览、富文本编辑（前端本地处理）</p>
+    </div>
+
+    <!-- 文件上传页 -->
+    <div id="upload" class="page">
+        <h1>文件上传预览</h1>
+        <div class="upload-area">
+            <p>点击按钮选择文件，或拖拽文件到此处</p>
+            <input type="file" id="file-input" class="file-input" onchange="previewFile()">
+            <label for="file-input" class="upload-btn">选择文件</label>
+            <p id="file-preview" class="preview-text"></p>
+        </div>
+    </div>
+
+    <!-- 文本编辑页 -->
+    <div id="text-edit" class="page">
+        <h1>自定义文本编辑</h1>
+        <div class="text-box-container">
+            <p>在此编辑文本，内容会实时保存到浏览器本地存储（刷新不丢失）</p>
+            <textarea class="text-box" id="custom-text" oninput="saveText()">可在此输入你的自定义文本内容...&#10;&#10;支持换行、段落排版，内容会自动保存</textarea>
+        </div>
+    </div>
+
+    <script>
+        // 存储当前激活的页面ID
+        let currentPageId = 'home';
+
+        // 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+            currentPageId = pageId;
+            // 加载该页面的保存背景
+            loadPageBackground(pageId);
+        }
+
+        // 加载页面背景
+        function loadPageBackground(pageId) {
+            const savedBg = localStorage.getItem(`pageBg_${pageId}`);
+            if (savedBg) {
+                document.body.style.backgroundImage = `url(${savedBg})`;
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
+        }
+
+        // 设置当前页面背景
+        function setPageBackground() {
+            const bgInput = document.getElementById('page-bg-input');
+            const file = bgInput.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 保存当前页面的背景到localStorage
+                    localStorage.setItem(`pageBg_${currentPageId}`, e.target.result);
+                    // 实时应用背景
+                    document.body.style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 普通文件预览
+        function previewFile() {
+            const fileInput = document.getElementById('file-input');
+            const preview = document.getElementById('file-preview');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                preview.textContent = `已选择文件：${file.name}（大小：${(file.size / 1024).toFixed(2)}KB）`;
+            } else {
+                preview.textContent = '';
+            }
+        }
+
+        // 文本保存与读取
+        function saveText() {
+            const text = document.getElementById('custom-text').value;
+            localStorage.setItem('customText', text);
+        }
+
+        // 页面加载初始化
+        window.onload = function() {
+            // 加载当前页面背景
+            loadPageBackground(currentPageId);
+            // 加载保存的文本
+            const savedText = localStorage.getItem('customText');
+            if (savedText) {
+                document.getElementById('custom-text').value = savedText;
+            }
+            // 拖拽上传通用逻辑
+            document.querySelectorAll('.upload-area').forEach(area => {
+                area.ondragover = (e) => {
+                    e.preventDefault();
+                    area.style.borderColor = '#2ea44f';
+                };
+                area.ondragleave = () => {
+                    area.style.borderColor = '#d1d5da';
+                };
+                area.ondrop = (e) => {
+                    e.preventDefault();
+                    area.style.borderColor = '#d1d5da';
+                    const file = e.dataTransfer.files[0];
+                    if (!file) return;
+                    if (area.parentElement.id === 'upload') {
+                        document.getElementById('file-input').files = e.dataTransfer.files;
+                        previewFile();
+                    }
+                };
+            });
+        };
+    </script>
+</body>
+</html>
