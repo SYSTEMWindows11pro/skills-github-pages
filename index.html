@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEMWindows11Pro的网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* 右上角圆角导航按钮 */
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+        }
+        .nav-btn {
+            padding: 10px 22px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .nav-btn:hover {
+            background: #0078d7;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,120,215,0.3);
+        }
+        /* 页面通用样式 */
+        .page {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 80px 40px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .page.active {
+            display: block;
+        }
+        /* 主页样式 - 仅显示第一张图上半部分 */
+        #home {
+            background: url('bg1.jpg') no-repeat top center;
+            background-size: 100% 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        /* sinx波浪底部装饰 */
+        .sin-wave {
+            position: absolute;
+            top: 50vh;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: white;
+            /* sinx单波浪裁剪路径 */
+            clip-path: polygon(0 0, 50% 80%, 100% 0, 100% 100%, 0 100%);
+            z-index: 1;
+        }
+        /* 主页文字样式 - 黑体 */
+        .home-main-title {
+            font-family: "SimHei", "黑体", sans-serif;
+            font-size: 46px;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            margin-bottom: 18px;
+            z-index: 2;
+        }
+        .home-sub-title {
+            font-size: 22px;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        /* 简介页样式 */
+        #intro {
+            background: url('bg2.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .intro-card {
+            background: rgba(255,255,255,0.9);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 700px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .intro-text {
+            font-size: 20px;
+            color: #0078d7; /* 蓝色字体 */
+            line-height: 1.8;
+        }
+        /* 文件上传页样式 */
+        #upload {
+            background: url('bg3.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-card {
+            background: rgba(255,255,255,0.9);
+            padding: 40px;
+            border-radius: 15px;
+            width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .upload-title {
+            font-size: 26px;
+            margin-bottom: 25px;
+            color: #24292e;
+        }
+        .upload-area {
+            border: 2px dashed #0078d7;
+            padding: 35px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #005a9e;
+        }
+        #file-input {
+            display: none;
+        }
+        .upload-btn {
+            padding: 10px 28px;
+            background: #0078d7;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .upload-btn:hover {
+            background: #005a9e;
+        }
+        .upload-tip {
+            margin-top: 15px;
+            color: #586069;
+            font-size: 14px;
+        }
+        /* 文件介绍页样式 */
+        #file-desc {
+            background: url('bg4.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .video-card, .text-card {
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 15px;
+            width: 450px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .card-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #24292e;
+        }
+        #video-input {
+            display: none;
+        }
+        .text-edit {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .text-edit:focus {
+            outline: none;
+            border-color: #0078d7;
+            box-shadow: 0 0 0 3px rgba(0,120,215,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 右上角导航按钮 -->
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showPage('home')">主页</button>
+        <button class="nav-btn" onclick="showPage('intro')">简介</button>
+        <button class="nav-btn" onclick="showPage('upload')">文件上传</button>
+        <button class="nav-btn" onclick="showPage('file-desc')">文件介绍</button>
+    </div>
+
+    <!-- 主页 -->
+    <div id="home" class="page active">
+        <div class="sin-wave"></div>
+        <h1 class="home-main-title">欢迎来到SYSTEMWindows11Pro的网站</h1>
+        <p class="home-sub-title">软件上传网站</p>
+    </div>
+
+    <!-- 简介页 -->
+    <div id="intro" class="page">
+        <div class="intro-card">
+            <p class="intro-text">本网站由2025年12月23日创建，支持视频里文件下载。</p>
+        </div>
+    </div>
+
+    <!-- 文件上传页 -->
+    <div id="upload" class="page">
+        <div class="upload-card">
+            <h2 class="upload-title">文件上传</h2>
+            <label for="file-input" class="upload-area">
+                <p>点击选择文件 / 拖拽文件到此处</p>
+            </label>
+            <input type="file" id="file-input" onchange="previewFile()">
+            <button class="upload-btn" onclick="document.getElementById('file-input').click()">选择文件</button>
+            <p class="upload-tip" id="file-preview"></p>
+        </div>
+    </div>
+
+    <!-- 文件介绍页 -->
+    <div id="file-desc" class="page">
+        <div class="video-card">
+            <h3 class="card-title">视频上传</h3>
+            <label for="video-input" class="upload-area">
+                <p>点击选择视频文件</p>
+            </label>
+            <input type="file" id="video-input" accept="video/*" onchange="previewVideo()">
+            <button class="upload-btn" onclick="document.getElementById('video-input').click()">选择视频</button>
+            <p class="upload-tip" id="video-preview"></p>
+        </div>
+        <div class="text-card">
+            <h3 class="card-title">文件介绍编辑</h3>
+            <textarea class="text-edit" placeholder="请输入文件的详细介绍信息..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换函数
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // 普通文件预览
+        function previewFile() {
+            const file = document.getElementById('file-input').files[0];
+            const preview = document.getElementById('file-preview');
+            preview.textContent = file ? `已选择：${file.name}（${(file.size/1024).toFixed(2)}KB）` : '';
+        }
+
+        // 视频文件预览
+        function previewVideo() {
+            const file = document.getElementById('video-input').files[0];
+            const preview = document.getElementById('video-preview');
+            preview.textContent = file ? `已选择视频：${file.name}（${(file.size/1024/1024).toFixed(2)}MB）` : '';
+        }
+
+        // 拖拽上传逻辑
+        document.querySelectorAll('.upload-area').forEach(area => {
+            area.ondragover = e => {e.preventDefault(); area.style.borderColor = '#005a9e';};
+            area.ondragleave = () => area.style.borderColor = '#0078d7';
+            area.ondrop = e => {
+                e.preventDefault();
+                area.style.borderColor = '#0078d7';
+                const file = e.dataTransfer.files[0];
+                if (!file) return;
+                if (area.parentElement.classList.contains('upload-card')) {
+                    document.getElementById('file-input').files = e.dataTransfer.files;
+                    previewFile();
+                } else {
+                    document.getElementById('video-input').files = e.dataTransfer.files;
+                    previewVideo();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
