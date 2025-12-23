@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEMWindows11Pro的网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* 右上角圆角导航按钮 */
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+        }
+        .nav-btn {
+            padding: 10px 22px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .nav-btn.active {
+            background: #0078d7;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,120,215,0.3);
+        }
+        .nav-btn:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        /* 页面通用样式 */
+        .page {
+            display: none !important;
+            width: 100%;
+            min-height: 100vh;
+            padding: 80px 40px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .page.show {
+            display: block !important;
+        }
+        /* 主页样式 - 黑色字体 */
+        #home {
+            background: url('bg1.jpg') no-repeat top center;
+            background-size: 100% 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .sin-wave {
+            position: absolute;
+            top: 50vh;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: white;
+            clip-path: polygon(0 0, 50% 80%, 100% 0, 100% 100%, 0 100%);
+            z-index: 1;
+        }
+        .home-main-title {
+            font-family: "SimHei", "黑体", sans-serif;
+            font-size: 46px;
+            color: #000;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.4);
+            margin-bottom: 18px;
+            z-index: 2;
+        }
+        .home-sub-title {
+            font-size: 22px;
+            color: #000;
+            text-shadow: 0 2px 6px rgba(255,255,255,0.3);
+            z-index: 2;
+        }
+        /* 简介页样式 */
+        #intro {
+            background: url('bg2.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .intro-card {
+            background: rgba(255,255,255,0.9);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 700px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .intro-text {
+            font-size: 20px;
+            color: #0078d7;
+            line-height: 1.8;
+        }
+        /* 文件上传页 - 支持150个文件上传 */
+        #upload {
+            background: url('bg3.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 80px 20px;
+            overflow-y: auto;
+        }
+        .upload-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .upload-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .upload-header h2 {
+            font-size: 28px;
+            color: #24292e;
+        }
+        .upload-header p {
+            color: #586069;
+            margin-top: 10px;
+        }
+        .upload-area {
+            border: 2px dashed #0078d7;
+            padding: 35px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            text-align: center;
+        }
+        .upload-area:hover {
+            border-color: #005a9e;
+        }
+        #file-input {
+            display: none;
+        }
+        .upload-btn {
+            padding: 10px 28px;
+            background: #0078d7;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .upload-btn:hover {
+            background: #005a9e;
+        }
+        /* 文件列表样式 */
+        .file-list {
+            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+        }
+        .file-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-name {
+            color: #24292e;
+            font-size: 14px;
+            max-width: 600px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-size {
+            color: #586069;
+            font-size: 12px;
+        }
+        .empty-tip {
+            text-align: center;
+            padding: 20px;
+            color: #586069;
+        }
+        /* 文件介绍页 - 25个视频上传位 */
+        #file-desc {
+            background: url('bg4.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 80px 20px;
+            overflow-y: auto;
+        }
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .video-item {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .item-title {
+            font-size: 18px;
+            color: #24292e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .text-edit {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .text-edit:focus {
+            outline: none;
+            border-color: #0078d7;
+            box-shadow: 0 0 0 3px rgba(0,120,215,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 右上角导航按钮 -->
+    <div class="nav-buttons">
+        <button class="nav-btn" id="btn-home">主页</button>
+        <button class="nav-btn" id="btn-intro">简介</button>
+        <button class="nav-btn" id="btn-upload">文件上传</button>
+        <button class="nav-btn" id="btn-desc">文件介绍</button>
+    </div>
+
+    <!-- 主页 -->
+    <div id="home" class="page show">
+        <div class="sin-wave"></div>
+        <h1 class="home-main-title">欢迎来到SYSTEMWindows11Pro的网站</h1>
+        <p class="home-sub-title">软件上传网站</p>
+    </div>
+
+    <!-- 简介页 -->
+    <div id="intro" class="page">
+        <div class="intro-card">
+            <p class="intro-text">本网站由2025年12月23日创建，支持视频里文件下载。</p>
+        </div>
+    </div>
+
+    <!-- 文件上传页 - 支持150个文件 -->
+    <div id="upload" class="page">
+        <div class="upload-container">
+            <div class="upload-header">
+                <h2>批量文件上传（最多150个）</h2>
+                <p>支持点击/拖拽上传，自动显示文件列表</p>
+            </div>
+            <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                <p>点击选择文件 / 拖拽文件到此处</p>
+                <input type="file" id="file-input" multiple onchange="previewFiles(this)">
+            </div>
+            <div class="file-list" id="file-list">
+                <p class="empty-tip">暂无上传文件</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文件介绍页 - 25个视频上传位 -->
+    <div id="file-desc" class="page">
+        <div class="video-list" id="video-container">
+            <!-- JS动态生成25个视频项 -->
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 按钮事件绑定
+            document.getElementById('btn-home').onclick = function() {
+                changePage('home');
+                this.classList.add('active');
+            };
+            document.getElementById('btn-intro').onclick = function() {
+                changePage('intro');
+                this.classList.add('active');
+            };
+            document.getElementById('btn-upload').onclick = function() {
+                changePage('upload');
+                this.classList.add('active');
+            };
+            document.getElementById('btn-desc').onclick = function() {
+                changePage('file-desc');
+                this.classList.add('active');
+            };
+
+            // 初始化主页按钮激活态
+            document.getElementById('btn-home').classList.add('active');
+
+            // 生成25个视频上传项
+            generateVideoItems(25);
+
+            // 拖拽上传绑定
+            bindDragUpload();
+        };
+
+        // 页面切换函数
+        function changePage(targetId) {
+            const allPages = document.getElementsByClassName('page');
+            for (let i = 0; i < allPages.length; i++) {
+                allPages[i].classList.remove('show');
+            }
+            document.getElementById(targetId).classList.add('show');
+
+            const allBtns = document.getElementsByClassName('nav-btn');
+            for (let i = 0; i < allBtns.length; i++) {
+                allBtns[i].classList.remove('active');
+            }
+        }
+
+        // 生成指定数量的视频上传项
+        function generateVideoItems(count) {
+            const container = document.getElementById('video-container');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                videoItem.innerHTML = `
+                    <h3 class="item-title">视频 ${i}</h3>
+                    <div class="upload-area" onclick="document.getElementById('video-${i}').click()">
+                        <p>点击选择视频文件</p>
+                        <input type="file" id="video-${i}" class="video-input" accept="video/*" onchange="previewVideo(this, ${i})" style="display: none;">
+                    </div>
+                    <textarea class="text-edit" placeholder="请输入视频${i}的介绍文字..."></textarea>
+                `;
+                container.appendChild(videoItem);
+            }
+        }
+
+        // 批量文件预览（最多150个）
+        function previewFiles(input) {
+            const files = input.files;
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+
+            // 限制最多150个文件
+            const maxFiles = 150;
+            const validFiles = files.length > maxFiles ? Array.from(files).slice(0, maxFiles) : Array.from(files);
+
+            if (validFiles.length === 0) {
+                fileList.innerHTML = '<p class="empty-tip">暂无上传文件</p>';
+                return;
+            }
+
+            // 提示超出数量
+            if (files.length > maxFiles) {
+                const tip = document.createElement('p');
+                tip.className = 'empty-tip';
+                tip.style.color = '#d73a4a';
+                tip.textContent = `已自动截取前150个文件（共选择${files.length}个）`;
+                fileList.appendChild(tip);
+            }
+
+            // 渲染文件列表
+            validFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                // 文件大小格式化
+                const fileSize = file.size < 1024 * 1024 
+                    ? `${(file.size / 1024).toFixed(2)}KB` 
+                    : `${(file.size / (1024 * 1024)).toFixed(2)}MB`;
+                fileItem.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${fileSize}</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        // 视频预览
+        function previewVideo(input, index) {
+            const file = input.files[0];
+            if (!file) return;
+            // 可在此添加视频预览逻辑，如显示文件名/大小
+            const videoItem = input.closest('.video-item');
+            const tip = videoItem.querySelector('.upload-area p');
+            tip.textContent = `已选择：${file.name}`;
+        }
+
+        // 拖拽上传绑定
+        function bindDragUpload() {
+            const uploadArea = document.querySelector('#upload .upload-area');
+            document.addEventListener('dragover', e => e.preventDefault());
+            document.addEventListener('drop', e => e.preventDefault());
+
+            uploadArea.ondragover = e => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#005a9e';
+            };
+            uploadArea.ondragleave = () => {
+                uploadArea.style.borderColor = '#0078d7';
+            };
+            uploadArea.ondrop = e => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#0078d7';
+                const files = e.dataTransfer.files;
+                if (files.length === 0) return;
+                // 将拖拽的文件赋值给文件输入框
+                document.getElementById('file-input').files = files;
+                previewFiles(document.getElementById('file-input'));
+            };
+        }
+    </script>
+</body>
+</html>
